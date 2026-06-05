@@ -1,0 +1,49 @@
+name: Cotygodniowa aktualizacja bazy prawnej
+
+# Raz w tygodniu pobiera świeże teksty jednolite z ISAP, przebudowuje indeks
+# i wypycha zmiany. Streamlit Community Cloud wykrywa nowy commit i sam
+# przeładowuje aplikację z aktualnym stanem prawnym.
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"   # w każdy poniedziałek o 03:00 UTC
+  workflow_dispatch: {}     # pozwala też uruchomić ręcznie z zakładki "Actions"
+
+permissions:
+  contents: write           # potrzebne, by Action mógł wypchnąć zaktualizowaną bazę
+
+concurrency:
+  group: refresh-index
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Pobierz repozytorium
+        uses: actions/checkout@v4
+
+      - name: Ustaw Pythona 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Zainstaluj zależności
+        run: pip install -r requirements.txt
+
+      - name: Przebuduj indeks z ISAP
+        run: python ingest/build_index.py --force
+
+      - name: Wypchnij zaktualizowaną bazę (tylko jeśli się zmieniła)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "Brak zmian w bazie prawnej — nic do wypchnięcia."
+          else
+            git commit -m "Automatyczna aktualizacja bazy prawnej z ISAP ($(date -u +%Y-%m-%d))"
+            git push
+          fi
