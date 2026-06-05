@@ -1,0 +1,13 @@
+# Sekret — NIGDY nie commitować klucza Google
+.env
+
+# Środowisko i pliki tymczasowe
+.venv/
+__pycache__/
+*.pyc
+
+# Uwaga: indeks prawny (data/) jest CELOWO commitowany,
+# żeby aplikacja działała od razu po wdrożeniu na Streamlit Cloud.
+
+# Plik blokady lokalnego Qdranta — nie commitować
+data/qdrant_db/.lock
