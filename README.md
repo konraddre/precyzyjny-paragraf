@@ -1,7 +1,7 @@
 # § Precyzyjny Paragraf
 
 Asystent prawny RAG dla polskiego prawa. Odpowiada **wyłącznie** na podstawie
-zaindeksowanych aktów prawnych z ISAP, z dokładnym cytowaniem artykułów — bez
+zaindeksowanych aktów prawnych z ISAP, z dokładnym cytowaniem artykułów. Bez
 zmyślonych przepisów typowych dla zwykłych chatbotów.
 
 Zbudowany jako narzędzie pracy dla prawnika: wpisujesz pytanie (opcjonalnie
